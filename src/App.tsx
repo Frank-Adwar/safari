@@ -1,126 +1,230 @@
-import React, { useState } from 'react';
-import { Heart, ArrowDown, MapPin, Menu, X } from 'lucide-react';
+import React, { useRef, useState, useLayoutEffect } from 'react';
+import { ChevronRight, Instagram } from 'lucide-react';
+import GallerySection from './components/GallerySection';
 
 export default function App() {
-  const [cookieAccepted, setCookieAccepted] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [sectionHeight, setSectionHeight] = useState(0);
 
-  const navLinks = ['Home', 'Destinations', 'Travel Guide', 'Enroll', 'Packages', 'About', 'Contact Us'];
+  useLayoutEffect(() => {
+    if (!gridRef.current) return;
+    
+    const updateHeight = () => {
+      if (gridRef.current) {
+        setSectionHeight(gridRef.current.offsetHeight);
+      }
+    };
+    
+    updateHeight();
+    
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(gridRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-[#0a1f18] text-[#f4f1eb] font-sans selection:bg-[#f4f1eb] selection:text-[#0a1f18]">
-      {/* Tilted Background Grid */}
-      <div className="absolute top-1/2 left-1/2 w-[200vw] h-[200vh] -translate-x-1/2 -translate-y-1/2 -rotate-[20deg] opacity-70 pointer-events-none">
-        <div className="grid grid-cols-4 grid-rows-4 gap-4 md:gap-6 w-full h-full">
-          {/* Row 1 */}
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          {/* Row 2 */}
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          {/* Row 3 */}
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1426604966848-d7adac402bff?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1506744626753-dba7d4154a14?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1501854140801-50d01698950b?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          {/* Row 4 */}
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1433086966358-54859d0ed716?q=80&w=1000&auto=format&fit=crop)' }}></div>
-          <div className="bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1000&auto=format&fit=crop)' }}></div>
+    <div className="bg-[#0A110D] font-sans">
+      {/* Split Layout Container */}
+      <div className="relative">
+        <div 
+          className="sticky z-0 bg-black"
+          style={{ top: `min(0px, calc(100vh - ${sectionHeight}px))` }}
+        >
+          <div 
+            ref={gridRef}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-[1px] bg-[#0A110D] pb-[1px]"
+          >
+          
+          {/* Left Column (Sticky Image) */}
+        <div className="relative h-full">
+          <div 
+            className="lg:sticky lg:top-0 lg:h-screen w-full min-h-[50vh] bg-[#E8E5DF] overflow-hidden"
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1523805009345-7448845a9e53?q=80&w=2000&auto=format&fit=crop" 
+              alt="Giraffes at Sunset" 
+              className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 mix-blend-multiply"
+            />
+            <div className="absolute top-5 left-5 lg:top-8 lg:left-8 flex items-center gap-2 text-[#0A110D]">
+              <div className="flex -space-x-2 opacity-80">
+                <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={3} />
+                <ChevronRight className="w-6 h-6 lg:w-8 lg:h-8" strokeWidth={3} />
+              </div>
+              <span className="font-sans font-bold text-2xl lg:text-3xl tracking-tighter opacity-80">WILD SAFARI</span>
+            </div>
+          </div>
         </div>
+
+        {/* Right Column (Scrollable Content) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[1px] bg-[#0A110D]">
+          
+          {/* Top Middle -> Block 1 */}
+          <div className="bg-[#E8E5DF] p-6 lg:p-10 flex flex-col min-h-[350px] lg:min-h-[50vh]">
+            <h2 className="text-xl lg:text-2xl xl:text-[28px] font-medium leading-tight text-[#0A110D] tracking-tight">
+              Experience the Great Migration: A Journey Through the Serengeti
+            </h2>
+            <div className="mt-auto pt-8 lg:pt-4 font-mono text-[10px] xl:text-[11px] tracking-widest uppercase text-[#0A110D] space-y-3">
+              <p>Featured Expedition</p>
+              <p className="leading-relaxed opacity-80">
+                Witness millions of wildebeest and zebras traverse the plains in one of nature's most spectacular events.
+              </p>
+            </div>
+          </div>
+
+          {/* Top Right -> Block 2 */}
+          <div className="bg-[#E8E5DF] p-6 lg:p-10 flex flex-col relative min-h-[350px] lg:min-h-[50vh]">
+            <div className="absolute top-5 right-5 lg:top-8 lg:right-8 flex items-center gap-3 cursor-pointer text-[#0A110D] hover:opacity-70 transition-opacity z-10">
+              <div className="flex flex-col gap-[4px] w-6 lg:w-8">
+                <div className="h-[2px] w-full bg-current"></div>
+                <div className="h-[2px] w-full bg-current"></div>
+              </div>
+              <span className="font-mono text-xs lg:text-sm uppercase tracking-widest font-medium">Menu</span>
+            </div>
+            
+            <h2 className="text-xl lg:text-2xl xl:text-[28px] font-medium leading-tight text-[#0A110D] tracking-tight mt-12 lg:mt-0 pr-12">
+              Luxury Lodges: Where Comfort Meets the Untamed Wilderness
+            </h2>
+            <div className="mt-auto pt-8 lg:pt-4 font-mono text-[10px] xl:text-[11px] tracking-widest uppercase text-[#0A110D] space-y-3">
+              <p>Accommodations</p>
+              <p className="leading-relaxed opacity-80">
+                Immerse yourself in nature without sacrificing five-star amenities and world-class dining.
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom Left -> Block 3 (Full width on right side) */}
+          <div className="md:col-span-2 bg-[#15241B] p-8 lg:p-12 xl:p-16 flex flex-col min-h-[400px] lg:min-h-[60vh]">
+            <h1 className="text-3xl lg:text-4xl xl:text-[52px] font-medium leading-[1.1] text-[#E8E5DF] tracking-tight max-w-3xl mt-auto lg:mt-4">
+              Discover the Big Five: Your Ultimate African Safari Adventure
+            </h1>
+            <div className="mt-8 lg:mt-auto">
+              <div className="font-mono text-[10px] xl:text-[11px] tracking-widest uppercase text-[#a0a0a0] space-y-4 max-w-xl">
+                <p>Wildlife Encounters</p>
+                <p className="leading-relaxed">
+                  Join our expert guides on daily game drives to spot lions, leopards, rhinos, elephants, and buffalo in their natural habitat.
+                </p>
+              </div>
+              <button className="mt-8 bg-[#E8E5DF] text-[#0A110D] font-mono text-[10px] xl:text-xs font-medium tracking-widest uppercase px-6 py-3 xl:px-8 xl:py-4 rounded-full hover:bg-white transition-colors w-fit">
+                Plan Your Safari
+              </button>
+            </div>
+          </div>
+
+          {/* Middle Middle -> Block 4 */}
+          <div className="bg-[#E8E5DF] p-6 lg:p-10 flex flex-col min-h-[350px] lg:min-h-[50vh]">
+            <h2 className="text-xl lg:text-2xl xl:text-[28px] font-medium leading-tight text-[#0A110D] tracking-tight mt-auto lg:mt-8">
+              Guided Walking Safaris: Connect with the Earth
+            </h2>
+            <div className="mt-auto pt-8 lg:pt-4 font-mono text-[10px] xl:text-[11px] tracking-widest uppercase text-[#0A110D] space-y-3">
+              <p>Immersive Experiences</p>
+              <p className="leading-relaxed opacity-80">
+                Step out of the vehicle and experience the bush up close, learning about tracks, flora, and smaller wildlife.
+              </p>
+            </div>
+          </div>
+
+          {/* Middle Right -> Block 5 */}
+          <div className="bg-[#15241B] p-6 lg:p-10 flex flex-col min-h-[350px] lg:min-h-[50vh]">
+            <h2 className="text-xl lg:text-2xl xl:text-[28px] font-medium leading-tight text-[#E8E5DF] tracking-tight mt-auto lg:mt-8">
+              Conservation at Heart: Protecting Africa's Heritage
+            </h2>
+            <div className="mt-auto pt-8 lg:pt-4 font-mono text-[10px] xl:text-[11px] tracking-widest uppercase text-[#a0a0a0] space-y-3">
+              <p>Our Commitment</p>
+              <p className="leading-relaxed">
+                A portion of every booking goes directly to local anti-poaching units and community development projects, ensuring the wild remains wild.
+              </p>
+            </div>
+          </div>
+
+        </div>
+        </div>
+        </div>
+        
+        {/* Spacer to allow scrolling while sticky */}
+        <div className="h-[100vh] pointer-events-none"></div>
       </div>
 
-      {/* Overlays */}
-      <div className="absolute inset-0 bg-[#0a1f18]/50 pointer-events-none"></div>
-      <div className="absolute inset-0 bg-gradient-to-br from-[#3a5a40]/30 via-[#1a3a2a]/40 to-[#0a1f18]/60 mix-blend-multiply pointer-events-none"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_100%)] opacity-50 pointer-events-none"></div>
-
-      {/* Header */}
-      <header className="relative z-20 flex items-center justify-between px-6 py-6 md:px-12 md:py-8">
-        {/* Left: Logo */}
-        <div className="flex items-center gap-3 z-30">
-          <h1 className="font-serif text-3xl md:text-4xl tracking-wide">SAFARI</h1>
-          <MapPin className="w-5 h-5 md:w-7 md:h-7 opacity-80" strokeWidth={1} />
-        </div>
-
-        {/* Center: Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-6 xl:gap-8 absolute left-1/2 -translate-x-1/2">
-          {navLinks.map((item) => (
-            <a key={item} href="#" className="text-[10px] xl:text-[11px] tracking-[0.15em] uppercase hover:opacity-70 transition-opacity whitespace-nowrap mt-0.5">
-              {item}
-            </a>
-          ))}
-        </nav>
-
-        {/* Right: Actions */}
-        <div className="flex items-center gap-6 md:gap-8 z-30">
-          <button className="hover:opacity-70 transition-opacity">
-            <Heart className="w-5 h-5" strokeWidth={1} />
-          </button>
-          {/* Mobile Menu Toggle */}
-          <button 
-            className="lg:hidden hover:opacity-70 transition-opacity"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" strokeWidth={1.5} /> : <Menu className="w-6 h-6" strokeWidth={1.5} />}
-          </button>
-        </div>
-      </header>
-
-      {/* Mobile Navigation Menu */}
-      <div className={`fixed inset-0 z-10 bg-[#0a1f18] flex flex-col items-center justify-center transition-transform duration-500 ease-in-out lg:hidden ${isMobileMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
-        <nav className="flex flex-col items-center gap-8">
-          {navLinks.map((item) => (
-            <a 
-              key={item} 
-              href="#" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="text-lg tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
-            >
-              {item}
-            </a>
-          ))}
-        </nav>
+      {/* Gallery Section with Scroll Animation */}
+      <div ref={galleryRef} className="relative z-10 -mt-[100vh]">
+        <GallerySection />
       </div>
 
-      {/* Main Content */}
-      <main className="relative z-10 flex flex-col justify-between h-[calc(100vh-100px)] px-6 md:px-12 pb-8 md:pb-12">
-        <div className="flex-1 flex flex-col justify-center">
-          <p className="text-lg md:text-[22px] max-w-md font-light leading-[1.4] tracking-wide mt-20 md:mt-32">
-            Exclusive residence with a rich<br className="hidden md:block" />
-            wellness infrastructure next to Nature<br className="hidden md:block" />
-            Park
-          </p>
-        </div>
+      {/* Footer Section */}
+      <footer className="min-h-screen bg-white text-black p-4 md:p-6 lg:p-8 font-sans flex flex-col justify-center relative z-20">
+        <div className="max-w-[1600px] w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          {/* DESTINATIONS */}
+          <div className="border border-gray-200 rounded-2xl p-6 lg:p-8 flex flex-col min-h-[300px] lg:min-h-[400px]">
+            <h3 className="font-bold text-sm tracking-wider mb-auto">DESTINATIONS</h3>
+            <ul className="space-y-4 text-[15px] font-medium">
+              <li><a href="#" className="hover:opacity-70 transition-opacity">All</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Serengeti</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Maasai Mara</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Kruger National Park</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Okavango Delta</a></li>
+            </ul>
+          </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-12 md:gap-8 w-full">
-          <button className="w-12 h-12 md:w-14 md:h-14 rounded-full border border-current flex items-center justify-center hover:bg-white/10 transition-colors shrink-0">
-            <ArrowDown className="w-5 h-5 md:w-6 md:h-6" strokeWidth={1} />
-          </button>
+          {/* EXPERIENCES */}
+          <div className="border border-gray-200 rounded-2xl p-6 lg:p-8 flex flex-col min-h-[300px] lg:min-h-[400px]">
+            <h3 className="font-bold text-sm tracking-wider mb-8">EXPERIENCES</h3>
+            <ul className="space-y-4 text-[15px] font-medium">
+              <li><a href="#" className="hover:opacity-70 transition-opacity">All</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Game Drives</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Walking Safaris</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Hot Air Balloon</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Photography Tours</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Cultural Visits</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Conservation</a></li>
+            </ul>
+          </div>
 
-          <h2 className="font-serif text-6xl sm:text-7xl md:text-8xl lg:text-[11rem] leading-[0.9] text-right tracking-tight">
-            Splendor<br />of Renewal
-          </h2>
-        </div>
-      </main>
+          {/* COMPANY */}
+          <div className="border border-gray-200 rounded-2xl p-6 lg:p-8 flex flex-col min-h-[300px] lg:min-h-[400px]">
+            <h3 className="font-bold text-sm tracking-wider mb-8">COMPANY</h3>
+            <ul className="space-y-4 text-[15px] font-medium">
+              <li><a href="#" className="underline decoration-1 underline-offset-4 hover:opacity-70 transition-opacity">Home</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">FAQs</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Booking Terms</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Privacy Policy</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Cookie Policy</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Contact</a></li>
+              <li><a href="#" className="hover:opacity-70 transition-opacity">Plan Your Trip</a></li>
+            </ul>
+          </div>
 
-      {/* Cookie Banner */}
-      {!cookieAccepted && (
-        <div className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-50 bg-[#f0eee4] text-[#1a1a1a] rounded-full px-6 md:px-8 py-3 flex items-center gap-6 md:gap-8 shadow-2xl w-[90%] md:w-auto justify-between md:justify-start">
-          <span className="text-[9px] md:text-[10px] tracking-[0.2em] font-medium leading-[1.4]">THIS SITE COLLECTS<br/>COOKIES.</span>
-          <button 
-            onClick={() => setCookieAccepted(true)}
-            className="border border-[#1a1a1a] rounded-full px-5 md:px-6 py-2 text-[9px] md:text-[10px] tracking-[0.2em] font-medium hover:bg-[#1a1a1a] hover:text-[#f0eee4] transition-colors shrink-0"
-          >
-            ACCEPT
-          </button>
+          {/* SOCIALS */}
+          <div className="flex flex-col gap-4 lg:gap-6 min-h-[300px] lg:min-h-[400px]">
+            <div className="grid grid-cols-2 gap-4 lg:gap-6 flex-1">
+              <a href="#" className="border border-gray-200 rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors h-full">
+                <Instagram className="w-8 h-8 lg:w-10 lg:h-10" strokeWidth={2} />
+              </a>
+              <a href="#" className="border border-gray-200 rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors h-full">
+                <svg className="w-8 h-8 lg:w-10 lg:h-10" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+              </a>
+            </div>
+            <div className="grid grid-cols-3 gap-4 lg:gap-6 flex-1">
+              <a href="#" className="border border-gray-200 rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors h-full">
+                <svg className="w-6 h-6 lg:w-8 lg:h-8" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+                </svg>
+              </a>
+              <a href="#" className="border border-gray-200 rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors h-full">
+                <svg className="w-7 h-7 lg:w-9 lg:h-9" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
+                </svg>
+              </a>
+              <a href="#" className="border border-gray-200 rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors h-full">
+                <svg className="w-8 h-8 lg:w-10 lg:h-10" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
-      )}
+      </footer>
     </div>
   );
 }
