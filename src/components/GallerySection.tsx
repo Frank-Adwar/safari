@@ -87,8 +87,7 @@ function Card({ card, index, total }: { card: any, index: number, total: number 
   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.92]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.4]);
 
-  const stickyTopValue = 15 + index * 4;
-  const stickyTop = `${stickyTopValue}vh`;
+  const stickyTop = `calc(15vh + ${index * 40}px)`;
 
   // Expansion animations for the last card
   const marginTop = useTransform(scrollYProgress, [0, 0.4], [stickyTop, "0vh"]);
@@ -102,84 +101,104 @@ function Card({ card, index, total }: { card: any, index: number, total: number 
   const newContentOpacity = useTransform(scrollYProgress, [0.4, 0.6], [0, 1]);
   const newContentY = useTransform(scrollYProgress, [0.4, 0.6], [50, 0]);
 
+  const cardContent = (
+    <motion.div 
+      style={isLast ? { 
+        marginTop, 
+        height, 
+        width, 
+        maxWidth, 
+        borderRadius 
+      } : { 
+        scale, 
+        opacity,
+        width: 'calc(100% - 2rem)',
+        maxWidth: '1024px',
+        height: '70vh',
+        borderRadius: '24px'
+      }}
+      className="relative overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border border-white/10 group origin-top bg-[#15241B] mx-auto"
+    >
+      <img 
+        src={card.src} 
+        alt={card.title} 
+        className={`w-full h-full object-cover transition-transform duration-[2s] ease-out ${isLast ? '' : 'group-hover:scale-105'}`}
+      />
+      
+      {/* Gradient Overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-t from-[#0A110D]/90 via-[#0A110D]/20 to-transparent ${isLast ? 'opacity-60' : 'opacity-80 group-hover:opacity-100'} transition-opacity duration-700`} />
+      
+      {/* Original Content */}
+      <motion.div 
+        style={{ opacity: isLast ? contentOpacity : 1 }}
+        className={`absolute bottom-0 left-0 w-full p-6 md:p-12 flex flex-col gap-2 md:gap-4 transition-transform duration-700 ${isLast ? '' : 'transform translate-y-4 group-hover:translate-y-0'}`}
+      >
+        <div className="flex items-center gap-4">
+          <span className="text-xs md:text-sm font-mono tracking-[0.2em] text-[#E8E5DF] uppercase bg-white/10 px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
+            0{index + 1}
+          </span>
+          <span className="text-xs md:text-sm font-mono tracking-[0.2em] text-[#E8E5DF]/80 uppercase drop-shadow-md">
+            {card.subtitle}
+          </span>
+        </div>
+        <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-white drop-shadow-xl leading-tight">
+          {card.title}
+        </h3>
+      </motion.div>
+
+      {/* New Content (Only on last card) */}
+      {isLast && (
+        <motion.div 
+          style={{ opacity: newContentOpacity, y: newContentY }}
+          className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 md:p-8 bg-black/30 backdrop-blur-[2px]"
+        >
+          <span className="text-[#D4AF37] text-xs md:text-sm font-mono tracking-[0.3em] uppercase mb-4 md:mb-6">
+            Experience the Wild
+          </span>
+          <h2 className="text-4xl md:text-6xl lg:text-8xl font-serif text-white leading-tight mb-6 md:mb-8 max-w-4xl drop-shadow-2xl">
+            Your Journey Begins Here
+          </h2>
+          <p className="text-base md:text-xl text-white/90 max-w-2xl mb-8 md:mb-12 font-light drop-shadow-md">
+            Immerse yourself in the untamed beauty of the African savanna. Witness the circle of life unfold before your eyes in an unforgettable adventure.
+          </p>
+          <button className="px-6 md:px-8 py-3 md:py-4 bg-[#D4AF37] text-black font-medium tracking-widest uppercase text-xs md:text-sm hover:bg-white transition-colors duration-300 rounded-sm">
+            Book Expedition
+          </button>
+        </motion.div>
+      )}
+
+    </motion.div>
+  );
+
+  if (!isLast) {
+    return (
+      <div 
+        ref={cardRef} 
+        className="sticky flex items-start justify-center w-full"
+        style={{ 
+          top: stickyTop, 
+          height: '70vh',
+          marginBottom: '20vh'
+        }}
+      >
+        {cardContent}
+      </div>
+    );
+  }
+
   return (
     <div 
       ref={cardRef} 
-      className={`relative w-full ${isLast ? 'h-[300vh]' : 'h-[100vh]'}`}
+      className="relative w-full h-[300vh]"
     >
       <div 
         className="sticky flex items-start justify-center w-full"
         style={{ 
-          top: isLast ? 0 : stickyTop, 
-          height: isLast ? '100vh' : '70vh',
+          top: 0, 
+          height: '100vh',
         }}
       >
-        <motion.div 
-          style={isLast ? { 
-            marginTop, 
-            height, 
-            width, 
-            maxWidth, 
-            borderRadius 
-          } : { 
-            scale, 
-            opacity,
-            width: 'calc(100% - 2rem)',
-            maxWidth: '1024px',
-            height: '70vh',
-            borderRadius: '24px'
-          }}
-          className="relative overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)] border border-white/10 group origin-top bg-[#15241B] mx-auto"
-        >
-          <img 
-            src={card.src} 
-            alt={card.title} 
-            className={`w-full h-full object-cover transition-transform duration-[2s] ease-out ${isLast ? '' : 'group-hover:scale-105'}`}
-          />
-          
-          {/* Gradient Overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-t from-[#0A110D]/90 via-[#0A110D]/20 to-transparent ${isLast ? 'opacity-60' : 'opacity-80 group-hover:opacity-100'} transition-opacity duration-700`} />
-          
-          {/* Original Content */}
-          <motion.div 
-            style={{ opacity: isLast ? contentOpacity : 1 }}
-            className={`absolute bottom-0 left-0 w-full p-6 md:p-12 flex flex-col gap-2 md:gap-4 transition-transform duration-700 ${isLast ? '' : 'transform translate-y-4 group-hover:translate-y-0'}`}
-          >
-            <div className="flex items-center gap-4">
-              <span className="text-xs md:text-sm font-mono tracking-[0.2em] text-[#E8E5DF] uppercase bg-white/10 px-3 py-1 rounded-full backdrop-blur-md border border-white/20">
-                0{index + 1}
-              </span>
-              <span className="text-xs md:text-sm font-mono tracking-[0.2em] text-[#E8E5DF]/80 uppercase drop-shadow-md">
-                {card.subtitle}
-              </span>
-            </div>
-            <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif text-white drop-shadow-xl leading-tight">
-              {card.title}
-            </h3>
-          </motion.div>
-
-          {/* New Content (Only on last card) */}
-          {isLast && (
-            <motion.div 
-              style={{ opacity: newContentOpacity, y: newContentY }}
-              className="absolute inset-0 flex flex-col items-center justify-center text-center p-4 md:p-8 bg-black/30 backdrop-blur-[2px]"
-            >
-              <span className="text-[#D4AF37] text-xs md:text-sm font-mono tracking-[0.3em] uppercase mb-4 md:mb-6">
-                Experience the Wild
-              </span>
-              <h2 className="text-4xl md:text-6xl lg:text-8xl font-serif text-white leading-tight mb-6 md:mb-8 max-w-4xl drop-shadow-2xl">
-                Your Journey Begins Here
-              </h2>
-              <p className="text-base md:text-xl text-white/90 max-w-2xl mb-8 md:mb-12 font-light drop-shadow-md">
-                Immerse yourself in the untamed beauty of the African savanna. Witness the circle of life unfold before your eyes in an unforgettable adventure.
-              </p>
-              <button className="px-6 md:px-8 py-3 md:py-4 bg-[#D4AF37] text-black font-medium tracking-widest uppercase text-xs md:text-sm hover:bg-white transition-colors duration-300 rounded-sm">
-                Book Expedition
-              </button>
-            </motion.div>
-          )}
-
-        </motion.div>
+        {cardContent}
       </div>
     </div>
   );
