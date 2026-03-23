@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { Menu, X } from 'lucide-react';
@@ -16,12 +16,12 @@ function DesktopNavLink({
   children: React.ReactNode;
 }) {
   return (
-    <NavLink to={to} end={end} className="group relative shrink-0 px-2 py-2 xl:px-3">
+    <NavLink to={to} end={end} className="group relative shrink-0 px-1.5 py-2 sm:px-2 lg:px-1.5 xl:px-2.5">
       {({ isActive }) => (
         <>
           <span
             className={[
-              'whitespace-nowrap font-label text-[11px] uppercase tracking-[0.22em] transition-colors',
+              'whitespace-nowrap font-label text-[10px] uppercase tracking-[0.16em] transition-colors sm:tracking-[0.18em] lg:text-[10px] xl:text-[11px] xl:tracking-[0.22em]',
               lightNav
                 ? isActive
                   ? 'text-stone-900'
@@ -35,7 +35,7 @@ function DesktopNavLink({
           </span>
           <span
             className={[
-              'absolute bottom-1 left-2 right-2 h-px origin-left transition-transform duration-300 ease-out xl:left-3 xl:right-3',
+              'absolute bottom-1 left-1.5 right-1.5 h-px origin-left transition-transform duration-300 ease-out sm:left-2 sm:right-2 xl:left-2.5 xl:right-2.5',
               lightNav ? 'bg-stone-800' : 'bg-[#D4AF37]/90',
               isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
             ].join(' ')}
@@ -83,12 +83,70 @@ function MobileNavLink({
   );
 }
 
+const LG_MIN = 1024;
+
 export default function NavigationBar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLgUp, setIsLgUp] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(`(min-width: ${LG_MIN}px)`).matches
+  );
+  const [navOverflow, setNavOverflow] = useState(false);
+  const centerNavRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const isHome = pathname === PATHS.home;
   const lightNav = !isHome;
+
+  const showDesktopInlineNav = isLgUp && !navOverflow;
+  const showMenuButton = !showDesktopInlineNav;
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${LG_MIN}px)`);
+    const sync = () => setIsLgUp(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!isLgUp) {
+      setNavOverflow(false);
+      return;
+    }
+    const center = centerNavRef.current;
+    if (!center) return;
+    const ul = center.querySelector('ul');
+    if (!ul) return;
+
+    const measure = () => {
+      if (center.clientWidth < 8) return;
+      setNavOverflow(ul.scrollWidth > center.clientWidth + 1);
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(center);
+    ro.observe(ul);
+    return () => ro.disconnect();
+  }, [isLgUp, pathname, lightNav, navOverflow]);
+
+  useEffect(() => {
+    let t: number;
+    const onResize = () => {
+      if (!isLgUp) return;
+      window.clearTimeout(t);
+      t = window.setTimeout(() => setNavOverflow(false), 120);
+    };
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [isLgUp]);
+
+  useEffect(() => {
+    if (showDesktopInlineNav) setMobileOpen(false);
+  }, [showDesktopInlineNav]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
@@ -125,13 +183,13 @@ export default function NavigationBar() {
 
   const bookNav = ({ isActive }: { isActive: boolean }) => {
     if (lightNav) {
-      return `relative shrink-0 overflow-hidden rounded-sm px-5 py-2.5 font-label text-[11px] font-medium uppercase tracking-[0.28em] transition-all duration-300 ${
+      return `relative shrink-0 overflow-hidden rounded-sm px-3 py-2.5 font-label text-[10px] font-medium uppercase tracking-[0.22em] transition-all duration-300 sm:px-4 lg:px-3 xl:px-5 xl:text-[11px] xl:tracking-[0.28em] ${
         isActive
           ? 'bg-stone-900 text-white ring-2 ring-stone-300/80'
           : 'bg-stone-900 text-white shadow-[0_2px_12px_rgba(28,25,23,0.25)] hover:bg-stone-800 hover:shadow-md'
       }`;
     }
-    return `shrink-0 rounded-sm px-5 py-2.5 font-label text-[11px] font-medium uppercase tracking-[0.28em] transition-all duration-300 ${
+    return `shrink-0 rounded-sm px-3 py-2.5 font-label text-[10px] font-medium uppercase tracking-[0.22em] transition-all duration-300 sm:px-4 lg:px-3 xl:px-5 xl:text-[11px] xl:tracking-[0.28em] ${
       isActive ? 'bg-[#E8E5DF] text-[#0A110D] ring-2 ring-[#D4AF37]/50' : 'bg-[#D4AF37] text-[#0A110D] shadow-[0_2px_16px_rgba(0,0,0,0.35)] hover:bg-[#E8E5DF]'
     }`;
   };
@@ -161,7 +219,7 @@ export default function NavigationBar() {
       <motion.nav
         layout
         className={[
-          'relative mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-3 sm:px-4 md:px-6 xl:px-10',
+          'relative mx-auto flex max-w-[1600px] items-center justify-between gap-1 px-3 sm:gap-2 sm:px-4 md:px-5 lg:px-6 xl:px-10',
           'min-h-[4.25rem]',
           'border-b transition-[border-color,background-color,box-shadow] duration-300',
           navShell,
@@ -176,7 +234,10 @@ export default function NavigationBar() {
         >
           <button
             type="button"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm xl:hidden"
+            className={[
+              'h-10 w-10 shrink-0 items-center justify-center rounded-sm',
+              showMenuButton ? 'flex' : 'hidden',
+            ].join(' ')}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav-panel"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
@@ -198,8 +259,14 @@ export default function NavigationBar() {
           </Link>
         </motion.div>
 
-        <div className="hidden min-w-0 flex-1 items-center justify-center px-0.5 xl:flex">
-          <ul className="flex max-w-full flex-nowrap items-center justify-center gap-0 py-1 2xl:gap-0.5">
+        <div
+          ref={centerNavRef}
+          className={[
+            'min-w-0 flex-1 items-center justify-center px-0',
+            showDesktopInlineNav ? 'flex' : 'hidden',
+          ].join(' ')}
+        >
+          <ul className="flex max-w-full min-w-0 flex-nowrap items-center justify-center gap-0 py-1 lg:gap-px xl:gap-0.5">
             {NAV_LINKS.map((item, i) => (
               <motion.li
                 key={item.to}
@@ -219,8 +286,14 @@ export default function NavigationBar() {
         <div className="flex shrink-0 items-center gap-2">
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }}>
             <NavLink to={PATHS.book} className={bookNav}>
-              <span className="xl:hidden">Book</span>
-              <span className="hidden xl:inline">Book expedition</span>
+              {showDesktopInlineNav ? (
+                <>
+                  <span className="hidden xl:inline">Book expedition</span>
+                  <span className="xl:hidden">Book</span>
+                </>
+              ) : (
+                'Book'
+              )}
             </NavLink>
           </motion.div>
         </div>
@@ -236,7 +309,7 @@ export default function NavigationBar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm xl:hidden"
+              className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm"
               aria-label="Close menu"
               onClick={() => setMobileOpen(false)}
             />
@@ -250,7 +323,7 @@ export default function NavigationBar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-              className={`fixed inset-y-0 right-0 z-[120] flex w-[min(100vw,20rem)] flex-col border-l ${panelBorder} ${panelBg} shadow-2xl xl:hidden`}
+              className={`fixed inset-y-0 right-0 z-[120] flex w-[min(100vw,20rem)] flex-col border-l ${panelBorder} ${panelBg} shadow-2xl`}
             >
               <div className={`flex items-center justify-between border-b px-4 py-4 ${panelBorder}`}>
                 <span className={`font-label text-[10px] uppercase tracking-[0.28em] ${lightNav ? 'text-stone-500' : 'text-[#E8E5DF]/60'}`}>
