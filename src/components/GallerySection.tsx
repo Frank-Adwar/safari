@@ -6,7 +6,7 @@ const cards = [
     id: 1,
     title: "The Great Migration",
     subtitle: "Serengeti Plains",
-    src: "https://images.unsplash.com/photo-1493962853295-0fd70327578a?q=80&w=1200&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1711062752104-4f7d80374874?q=80&w=1200&auto=format&fit=crop",
   },
   {
     id: 2,
@@ -18,13 +18,13 @@ const cards = [
     id: 3,
     title: "Apex Predators",
     subtitle: "Maasai Mara",
-    src: "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?q=80&w=1000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1582553322727-e9d04e38f4a6?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: 4,
     title: "Ancient Rhinos",
     subtitle: "Ngorongoro Crater",
-    src: "https://images.unsplash.com/photo-1534177616072-ef7dc120449d?q=80&w=1000&auto=format&fit=crop",
+    src: "https://images.unsplash.com/photo-1544211413-16597c1a40b4?q=80&w=1000&auto=format&fit=crop",
   }
 ];
 
@@ -62,12 +62,9 @@ export default function GallerySection() {
       {/* Cards Container */}
       <div className="relative z-10 w-full flex flex-col items-center">
         {cards.map((card, index) => (
-          <Card 
-            key={card.id} 
-            card={card} 
-            index={index} 
-            total={cards.length}
-          />
+          <React.Fragment key={card.id}>
+            <Card card={card} index={index} total={cards.length} />
+          </React.Fragment>
         ))}
       </div>
     </div>
