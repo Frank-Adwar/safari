@@ -16,7 +16,7 @@ function DesktopNavLink({
   children: React.ReactNode;
 }) {
   return (
-    <NavLink to={to} end={end} className="group relative shrink-0 px-3 py-2">
+    <NavLink to={to} end={end} className="group relative shrink-0 px-2 py-2 xl:px-3">
       {({ isActive }) => (
         <>
           <span
@@ -35,7 +35,7 @@ function DesktopNavLink({
           </span>
           <span
             className={[
-              'absolute bottom-1 left-3 right-3 h-px origin-left transition-transform duration-300 ease-out',
+              'absolute bottom-1 left-2 right-2 h-px origin-left transition-transform duration-300 ease-out xl:left-3 xl:right-3',
               lightNav ? 'bg-stone-800' : 'bg-[#D4AF37]/90',
               isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
             ].join(' ')}
@@ -161,7 +161,7 @@ export default function NavigationBar() {
       <motion.nav
         layout
         className={[
-          'relative mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-4 md:px-10',
+          'relative mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-3 sm:px-4 md:px-6 xl:px-10',
           'min-h-[4.25rem]',
           'border-b transition-[border-color,background-color,box-shadow] duration-300',
           navShell,
@@ -176,7 +176,7 @@ export default function NavigationBar() {
         >
           <button
             type="button"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm lg:hidden"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm xl:hidden"
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav-panel"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
@@ -198,8 +198,8 @@ export default function NavigationBar() {
           </Link>
         </motion.div>
 
-        <div className="hidden min-w-0 flex-1 items-center justify-center px-1 lg:flex">
-          <ul className="flex max-w-full flex-nowrap items-center justify-center gap-0.5 py-1 xl:gap-1">
+        <div className="hidden min-w-0 flex-1 items-center justify-center px-0.5 xl:flex">
+          <ul className="flex max-w-full flex-nowrap items-center justify-center gap-0 py-1 2xl:gap-0.5">
             {NAV_LINKS.map((item, i) => (
               <motion.li
                 key={item.to}
@@ -219,7 +219,8 @@ export default function NavigationBar() {
         <div className="flex shrink-0 items-center gap-2">
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }}>
             <NavLink to={PATHS.book} className={bookNav}>
-              Book expedition
+              <span className="xl:hidden">Book</span>
+              <span className="hidden xl:inline">Book expedition</span>
             </NavLink>
           </motion.div>
         </div>
@@ -235,7 +236,7 @@ export default function NavigationBar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm xl:hidden"
               aria-label="Close menu"
               onClick={() => setMobileOpen(false)}
             />
@@ -249,7 +250,7 @@ export default function NavigationBar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-              className={`fixed inset-y-0 right-0 z-[120] flex w-[min(100vw,20rem)] flex-col border-l ${panelBorder} ${panelBg} shadow-2xl lg:hidden`}
+              className={`fixed inset-y-0 right-0 z-[120] flex w-[min(100vw,20rem)] flex-col border-l ${panelBorder} ${panelBg} shadow-2xl xl:hidden`}
             >
               <div className={`flex items-center justify-between border-b px-4 py-4 ${panelBorder}`}>
                 <span className={`font-label text-[10px] uppercase tracking-[0.28em] ${lightNav ? 'text-stone-500' : 'text-[#E8E5DF]/60'}`}>

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useLayoutEffect } from 'react';
 import { ChevronRight } from 'lucide-react';
 import GallerySection from '../components/GallerySection';
+import HomeTourismSections from '../components/HomeTourismSections';
 import HeroSection from '../components/HeroSection';
 
 export default function HomePage() {
@@ -132,6 +133,8 @@ export default function HomePage() {
       <div ref={galleryRef} className="relative z-10 -mt-[100vh]">
         <GallerySection />
       </div>
+
+      <HomeTourismSections />
     </>
   );
 }
